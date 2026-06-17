@@ -5,6 +5,26 @@ let allPlayers = [];
 let myTeam = [];
 let usedNames = [];
 
+const rugbyPositions = [
+  "Prop",
+  "Hooker",
+  "Prop",
+  "Scrumhalf",
+  "Flyhalf",
+  "Centre",
+  "Winger"
+];
+
+const fieldPositions = [
+  { top: "55px", left: "90px" },
+  { top: "110px", left: "160px" },
+  { top: "55px", left: "240px" },
+  { top: "170px", left: "350px" },
+  { top: "250px", left: "430px" },
+  { top: "320px", left: "530px" },
+  { top: "350px", left: "620px" }
+];
+
 async function getAllPlayers() {
   if (allPlayers.length > 0) return;
 
@@ -64,15 +84,7 @@ async function newSelection() {
 }
 
 function choosePlayer(player) {
-  if (myTeam.length >= 7) {
-    alert("Ton équipe est déjà complète.");
-    return;
-  }
-
-  if (usedNames.includes(player.name)) {
-    alert("Ce joueur a déjà été utilisé.");
-    return;
-  }
+  if (myTeam.length >= 7) return;
 
   myTeam.push(player);
   usedNames.push(player.name);
@@ -85,29 +97,19 @@ function choosePlayer(player) {
 
 function showTeam() {
   const field = document.getElementById("field");
-  field.innerHTML = "";
-
-  const positions = [
-    { top: "135px", left: "40px" },
-    { top: "70px", left: "150px" },
-    { top: "200px", left: "150px" },
-    { top: "70px", left: "285px" },
-    { top: "200px", left: "285px" },
-    { top: "70px", left: "420px" },
-    { top: "200px", left: "420px" }
-  ];
+  field.innerHTML = `<div class="posts"></div>`;
 
   myTeam.forEach((player, index) => {
     const div = document.createElement("div");
     div.className = "player-circle";
 
-    div.style.top = positions[index].top;
-    div.style.left = positions[index].left;
+    div.style.top = fieldPositions[index].top;
+    div.style.left = fieldPositions[index].left;
 
     div.innerHTML = `
-      ${player.name}<br>
-      ${player.position}<br>
-      ⭐ ${player.rating}
+      <div class="player-number">${index + 1}</div>
+      <div class="player-name">${player.name}</div>
+      <div class="player-position">${rugbyPositions[index]}</div>
     `;
 
     field.appendChild(div);
@@ -135,16 +137,12 @@ function playMatch() {
 
   let message = "";
 
-  if (myScore > opponentScore) {
-    message = "🏆 Victoire !";
-  } else if (myScore < opponentScore) {
-    message = "❌ Défaite.";
-  } else {
-    message = "🤝 Match nul.";
-  }
+  if (myScore > opponentScore) message = "🏆 Victoire !";
+  else if (myScore < opponentScore) message = "❌ Défaite.";
+  else message = "🤝 Match nul.";
 
   document.getElementById("result").innerHTML = `
-    <h3>${message}</h3>
+    <h2>${message}</h2>
     <p>Ton score : ${myScore}</p>
     <p>Score adverse : ${opponentScore}</p>
     <p>Puissance de ton équipe : ${myPower}</p>
