@@ -1,43 +1,167 @@
-const joueurs = [
-  { name: "John Eales", country: "Australia", position: "Lock", rating: 86 },
-  { name: "Agustin Pichot", country: "Argentina", position: "Scrum-half", rating: 90 },
-  { name: "Brian O'Driscoll", country: "Ireland", position: "Centre", rating: 91 },
-  { name: "Serge Blanco", country: "France", position: "Fullback", rating: 88 },
-  { name: "Jonah Lomu", country: "New Zealand", position: "Wing", rating: 94 },
-  { name: "Richie McCaw", country: "New Zealand", position: "Flanker", rating: 93 },
-  { name: "Thierry Dusautoir", country: "France", position: "Flanker", rating: 92 }
-];
+const SUPABASE_URL = "https://ujvgvxovpiuamftxevqi.supabase.co";
+const SUPABASE_KEY = "sb_publishable_kw6rGwvniSwP3oLf87Zs3A_J54SvgoM";
 
-let equipe = [];
-let dejaChoisis = [];
+let allPlayers = [];
+let myTeam = [];
+let usedNames = [];
 
-function tirerJoueur() {
-  const disponibles = joueurs.filter(
-    joueur => !dejaChoisis.includes(joueur.name)
-  );
+async function getAllPlayers() {
+  if (allPlayers.length > 0) return;
 
-  if (disponibles.length === 0) {
-    alert("Tous les joueurs ont été utilisés !");
+  const response = await fetch(`${SUPABASE_URL}/rest/v1/playerss?select=*`, {
+    headers: {
+      apikey: SUPABASE_KEY,
+      Authorization: `Bearer ${SUPABASE_KEY}`
+    }
+  });
+
+  allPlayers = await response.json();
+}
+
+async function newSelection() {
+  await getAllPlayers();
+
+  if (myTeam.length >= 7) {
+    alert("Ton équipe est complète.");
     return;
   }
 
-  const joueur =
-    disponibles[Math.floor(Math.random() * disponibles.length)];
+  const availablePlayers = allPlayers.filter(
+    player => !usedNames.includes(player.name)
+  );
 
-  dejaChoisis.push(joueur.name);
+  const countries = [...new Set(availablePlayers.map(player => player.country))];
 
-  const liste = document.getElementById("players");
+  const randomCountry =
+    countries[Math.floor(Math.random() * countries.length)];
 
-  liste.innerHTML = `
-    <li>
-      <strong>${joueur.name}</strong><br>
-      Pays : ${joueur.country}<br>
-      Poste : ${joueur.position}<br>
-      Note : ${joueur.rating}
-    </li>
+  const playersFromCountry = availablePlayers
+    .filter(player => player.country === randomCountry)
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 3);
+
+  document.getElementById("countryTitle").innerHTML =
+    `Nationalité : <strong>${randomCountry}</strong>`;
+
+  const choices = document.getElementById("choices");
+  choices.innerHTML = "";
+
+  playersFromCountry.forEach(player => {
+    const div = document.createElement("div");
+    div.className = "choice";
+
+    div.innerHTML = `
+      <strong>${player.name}</strong><br>
+      Poste : ${player.position}<br>
+      Coupe du monde : ${player.world_cup}<br>
+      Note : ${player.rating}
+    `;
+
+    div.onclick = () => choosePlayer(player);
+
+    choices.appendChild(div);
+  });
+}
+
+function choosePlayer(player) {
+  if (myTeam.length >= 7) {
+    alert("Ton équipe est déjà complète.");
+    return;
+  }
+
+  if (usedNames.includes(player.name)) {
+    alert("Ce joueur a déjà été utilisé.");
+    return;
+  }
+
+  myTeam.push(player);
+  usedNames.push(player.name);
+
+  document.getElementById("choices").innerHTML = "";
+  document.getElementById("countryTitle").innerHTML = "";
+
+  showTeam();
+}
+
+function showTeam() {
+  const field = document.getElementById("field");
+  field.innerHTML = "";
+
+  const positions = [
+    { top: "135px", left: "40px" },
+    { top: "70px", left: "150px" },
+    { top: "200px", left: "150px" },
+    { top: "70px", left: "285px" },
+    { top: "200px", left: "285px" },
+    { top: "70px", left: "420px" },
+    { top: "200px", left: "420px" }
+  ];
+
+  myTeam.forEach((player, index) => {
+    const div = document.createElement("div");
+    div.className = "player-circle";
+
+    div.style.top = positions[index].top;
+    div.style.left = positions[index].left;
+
+    div.innerHTML = `
+      ${player.name}<br>
+      ${player.position}<br>
+      ⭐ ${player.rating}
+    `;
+
+    field.appendChild(div);
+  });
+}
+
+function playMatch() {
+  if (myTeam.length < 7) {
+    alert("Choisis 7 joueurs avant de jouer le match.");
+    return;
+  }
+
+  const myPower = myTeam.reduce((total, p) => total + p.rating, 0);
+
+  const opponent = [...allPlayers]
+    .filter(player => !usedNames.includes(player.name))
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 7);
+
+  const opponentPower = opponent.reduce((total, p) => total + p.rating, 0);
+
+  const myScore = Math.floor(myPower / 45) + Math.floor(Math.random() * 15);
+  const opponentScore =
+    Math.floor(opponentPower / 45) + Math.floor(Math.random() * 15);
+
+  let message = "";
+
+  if (myScore > opponentScore) {
+    message = "🏆 Victoire !";
+  } else if (myScore < opponentScore) {
+    message = "❌ Défaite.";
+  } else {
+    message = "🤝 Match nul.";
+  }
+
+  document.getElementById("result").innerHTML = `
+    <h3>${message}</h3>
+    <p>Ton score : ${myScore}</p>
+    <p>Score adverse : ${opponentScore}</p>
+    <p>Puissance de ton équipe : ${myPower}</p>
+    <p>Puissance adverse : ${opponentPower}</p>
   `;
 }
 
-document
-  .getElementById("load")
-  .addEventListener("click", tirerJoueur);
+function resetGame() {
+  myTeam = [];
+  usedNames = [];
+
+  document.getElementById("choices").innerHTML = "";
+  document.getElementById("countryTitle").innerHTML = "";
+  document.getElementById("field").innerHTML = "";
+  document.getElementById("result").innerHTML = "";
+}
+
+document.getElementById("newSelection").addEventListener("click", newSelection);
+document.getElementById("playMatch").addEventListener("click", playMatch);
+document.getElementById("reset").addEventListener("click", resetGame);
