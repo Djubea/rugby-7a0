@@ -1,7 +1,7 @@
 body {
   font-family: Arial, sans-serif;
   padding: 20px;
-  background: #f2f2f2;
+  background: #e9f5e9;
 }
 
 button {
@@ -13,28 +13,68 @@ button {
 #game {
   display: flex;
   gap: 30px;
+  align-items: flex-start;
+}
+
+#selection {
+  width: 300px;
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+.choice {
+  background: #f7f7f7;
+  border: 1px solid #ccc;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.choice:hover {
+  background: #dff0ff;
 }
 
 #field {
-  width: 500px;
-  height: 700px;
-  background: #168a3a;
+  width: 700px;
+  height: 380px;
+  background: linear-gradient(#70c96b, #219653);
   border: 5px solid white;
-  border-radius: 10px;
+  border-radius: 20px;
   position: relative;
+  overflow: hidden;
+}
+
+#field::before {
+  content: "";
+  position: absolute;
+  left: 40px;
+  right: 40px;
+  top: 180px;
+  height: 4px;
+  background: white;
 }
 
 .player-circle {
-  width: 90px;
-  height: 90px;
+  width: 95px;
+  height: 95px;
   background: white;
   border-radius: 50%;
   position: absolute;
+  border: 3px solid #1b1b1b;
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
+  padding: 6px;
   font-size: 11px;
   font-weight: bold;
-  border: 2px solid #333;
+}
+
+#result {
+  background: white;
+  padding: 15px;
+  margin-top: 15px;
+  border-radius: 8px;
 }
