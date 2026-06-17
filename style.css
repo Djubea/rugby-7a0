@@ -1,80 +1,155 @@
 body {
+  margin: 0;
   font-family: Arial, sans-serif;
-  padding: 20px;
-  background: #e9f5e9;
+  background: #071b12;
+  color: white;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  background: #06120d;
+  border-bottom: 3px solid #2ecc71;
+}
+
+h1 {
+  flex: 1;
+  text-align: center;
+  font-size: 42px;
+  margin: 0;
 }
 
 button {
-  padding: 10px;
-  margin: 5px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  border: 2px solid white;
   cursor: pointer;
+  font-weight: bold;
+  background: #1f7a34;
+  color: white;
+}
+
+#playMatch {
+  background: #0057b8;
+}
+
+#reset {
+  background: #b82020;
 }
 
 #game {
   display: flex;
-  gap: 30px;
-  align-items: flex-start;
+  gap: 25px;
+  padding: 20px;
 }
 
 #selection {
-  width: 300px;
-  background: white;
+  width: 320px;
+  background: #0b261a;
+  border: 2px solid #2ecc71;
+  border-radius: 15px;
   padding: 15px;
-  border-radius: 10px;
 }
 
 .choice {
-  background: #f7f7f7;
-  border: 1px solid #ccc;
+  background: #123524;
+  border: 2px solid #44d16a;
+  border-radius: 12px;
   padding: 12px;
-  margin: 10px 0;
-  border-radius: 8px;
+  margin: 12px 0;
   cursor: pointer;
 }
 
 .choice:hover {
-  background: #dff0ff;
+  background: #1e5c39;
+}
+
+#terrain-zone {
+  flex: 1;
 }
 
 #field {
-  width: 700px;
-  height: 380px;
-  background: linear-gradient(#70c96b, #219653);
+  width: 720px;
+  height: 460px;
+  background: #129329;
   border: 5px solid white;
-  border-radius: 20px;
   position: relative;
   overflow: hidden;
 }
 
+/* lignes du terrain */
 #field::before {
   content: "";
   position: absolute;
-  left: 40px;
-  right: 40px;
-  top: 180px;
-  height: 4px;
-  background: white;
+  inset: 0;
+  background:
+    linear-gradient(to right, transparent 48%, white 49%, white 51%, transparent 52%),
+    linear-gradient(to bottom, transparent 24%, white 25%, white 26%, transparent 27%),
+    linear-gradient(to bottom, transparent 49%, white 50%, white 51%, transparent 52%),
+    linear-gradient(to bottom, transparent 74%, white 75%, white 76%, transparent 77%);
+  opacity: 0.8;
+}
+
+/* pointillés */
+#field::after {
+  content: "";
+  position: absolute;
+  inset: 35px;
+  border-left: 3px dashed white;
+  border-right: 3px dashed white;
+  opacity: 0.8;
+}
+
+/* poteaux */
+.posts {
+  position: absolute;
+  top: 5px;
+  left: 335px;
+  width: 50px;
+  height: 80px;
+  border-left: 5px solid white;
+  border-right: 5px solid white;
+  border-top: 5px solid white;
+  z-index: 2;
 }
 
 .player-circle {
-  width: 95px;
-  height: 95px;
-  background: white;
+  width: 78px;
+  height: 78px;
   border-radius: 50%;
+  background: #f7e436;
+  border: 4px solid #53ff4f;
+  color: black;
   position: absolute;
-  border: 3px solid #1b1b1b;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   text-align: center;
-  padding: 6px;
+  flex-direction: column;
   font-size: 11px;
+  font-weight: bold;
+  z-index: 3;
+}
+
+.player-number {
+  font-size: 22px;
   font-weight: bold;
 }
 
+.player-name {
+  font-size: 10px;
+}
+
+.player-position {
+  font-size: 10px;
+}
+
 #result {
-  background: white;
+  margin: 20px;
   padding: 15px;
-  margin-top: 15px;
-  border-radius: 8px;
+  background: #0b261a;
+  border: 2px solid #2ecc71;
+  border-radius: 12px;
 }
